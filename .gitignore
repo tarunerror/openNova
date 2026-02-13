@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+logs/
+chromadb/
+*.db
+*.sqlite
+
+# Planning docs (not committed per user request)
+Implementation_Plan.md
+AI_Agent_Design_Specification.md
+
+# Build
+build/
+dist/
+*.egg-info/
