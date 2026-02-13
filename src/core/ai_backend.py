@@ -63,10 +63,23 @@ class AIBackend:
             from src.llm.planner import planner
             from src.memory.manager import memory
             from src.actions.executor import action_executor
+            from src.plugins.plugin_manager import PluginManager
+            from src.scheduler.task_scheduler import task_scheduler
+            from src.watcher.file_watcher import file_watcher
             
             self.planner = planner
             self.memory = memory
             self.executor = action_executor
+            
+            # Initialize plugin system
+            self.plugin_manager = PluginManager(skills_dir="./skills")
+            self.plugin_manager.load_all_skills()
+            
+            # Initialize scheduler
+            self.scheduler = task_scheduler
+            
+            # Initialize file watcher
+            self.file_watcher = file_watcher
             
             logger.info("Brain components initialized")
         except Exception as e:
@@ -74,6 +87,9 @@ class AIBackend:
             self.planner = None
             self.memory = None
             self.executor = None
+            self.plugin_manager = None
+            self.scheduler = None
+            self.file_watcher = None
     
     def run(self):
         """Main loop for the AI backend."""
@@ -156,7 +172,26 @@ class AIBackend:
                                 metadata={"type": "command"}
                             )
                         
-                        # Create action plan
+                        # First, check if a plugin can handle this
+                        plugin_result = None
+                        if self.plugin_manager:
+                            plugin_result = self.plugin_manager.execute_skill(text)
+                        
+                        if plugin_result:
+                            # Plugin handled the command
+                            logger.info("Command handled by plugin")
+                            
+                            if self.tts:
+                                self.tts.speak(plugin_result.get("response", "Done"))
+                            
+                            return {
+                                "type": "response",
+                                "status": "success" if plugin_result.get("success") else "error",
+                                "message": plugin_result.get("response", ""),
+                                "plugin_data": plugin_result.get("data")
+                            }
+                        
+                        # No plugin handled it, fall back to planner
                         if self.planner:
                             plan = self.planner.create_plan(text)
                             
@@ -257,6 +292,31 @@ class AIBackend:
                     "status": "error",
                     "message": "No plan to execute or executor not available"
                 }
+        
+        elif cmd_type == "file_drop":
+            # Handle file drop event
+            files = command.get("files", [])
+            message = command.get("message", "")
+            
+            logger.info(f"Processing file drop: {len(files)} files")
+            
+            # Store in memory
+            if self.memory:
+                self.memory.remember(
+                    content=f"User dropped files: {', '.join(files)}",
+                    metadata={"type": "file_drop", "files": files}
+                )
+            
+            # Speak acknowledgment
+            if self.tts:
+                self.tts.speak(f"I received {len(files)} file{'s' if len(files) > 1 else ''}. What would you like me to do with them?")
+            
+            return {
+                "type": "response",
+                "status": "success",
+                "message": f"Received {len(files)} file(s)",
+                "files": files
+            }
         
         else:
             return {

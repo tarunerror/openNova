@@ -142,6 +142,9 @@ class FloatingWidget(QMainWindow):
         central.setLayout(layout)
         
         self.setWindowTitle("AI Agent")
+        
+        # Enable drag and drop
+        self.setAcceptDrops(True)
     
     def _position_window(self):
         """Position window in top-right corner."""
@@ -284,6 +287,46 @@ class FloatingWidget(QMainWindow):
         """Handle mouse move for dragging."""
         if event.buttons() == Qt.MouseButton.LeftButton:
             self.move(event.globalPosition().toPoint() - self.drag_position)
+    
+    def dragEnterEvent(self, event):
+        """Handle drag enter event."""
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+            self.set_status("Drop files here...")
+            self.set_state("thinking")
+    
+    def dragLeaveEvent(self, event):
+        """Handle drag leave event."""
+        self.set_status(self.status_text)
+        self.set_state("idle")
+    
+    def dropEvent(self, event):
+        """Handle file drop event."""
+        files = []
+        for url in event.mimeData().urls():
+            file_path = url.toLocalFile()
+            if file_path:
+                files.append(file_path)
+        
+        if files:
+            logger.info(f"Files dropped: {files}")
+            
+            # Create a command describing the dropped files
+            file_list = "\n".join(files)
+            drop_message = f"Files dropped:\n{file_list}"
+            
+            self.set_status(f"Received {len(files)} file(s)")
+            
+            # Send to AI backend for processing
+            self.command_queue.put({
+                "type": "file_drop",
+                "files": files,
+                "message": drop_message
+            })
+            
+            event.acceptProposedAction()
+        
+        self.set_state("idle")
     
     def closeEvent(self, event):
         """Handle window close."""
