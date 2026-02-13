@@ -4,22 +4,11 @@ Handles LLM inference, planning, and coordination.
 """
 from multiprocessing import Queue
 import time
-import logging
 from pathlib import Path
+from src.utils.logging_config import setup_logging
 
-
-# Setup logging
-log_dir = Path("logs")
-log_dir.mkdir(exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(log_dir / "ai_backend.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger("AIBackend")
+# Setup logging with rotating file handler
+logger = setup_logging("AIBackend", "ai_backend.log")
 
 
 class AIBackend:

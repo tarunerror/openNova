@@ -32,3 +32,6 @@ pywin32>=306
 # Utilities
 python-dotenv>=1.0.0
 requests>=2.31.0
+
+# Build & Packaging
+pyinstaller>=6.0.0

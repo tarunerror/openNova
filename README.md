@@ -53,6 +53,20 @@ Configuration is stored in `~/.ai_agent/config.json`. Key settings:
 - **Vision Method**: `accessibility`, `vision`, or `hybrid`
 - **Safety**: Enable/disable dangerous action confirmations
 
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+# LLM API Keys (choose your provider)
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+GOOGLE_API_KEY=your_google_key
+
+# Local LLM (Ollama)
+OLLAMA_HOST=http://localhost:11434
+```
+
 ## Architecture
 
 ```
@@ -75,11 +89,89 @@ Configuration is stored in `~/.ai_agent/config.json`. Key settings:
 2. Speak your command
 3. Agent executes and responds
 
+### Drag and Drop
+
+Simply drag files onto the AI Agent window to process them. The agent will ask what you'd like to do with the files.
+
 ### Example Commands
 
 - "Open Chrome and search for Python tutorials"
 - "Summarize the document on my desktop"
 - "Schedule an email to send tomorrow at 9 AM"
+- "What's the weather like?" (via weather plugin)
+- "Move the mouse to the File menu and click"
+
+## Plugin Development
+
+Create custom skills by extending the `Skill` base class:
+
+```python
+# skills/my_skill.py
+from src.plugins.skill_base import Skill
+
+class MySkill(Skill):
+    @property
+    def name(self) -> str:
+        return "MySkill"
+    
+    @property
+    def description(self) -> str:
+        return "Does something cool"
+    
+    def can_handle(self, user_input: str) -> bool:
+        return "my trigger" in user_input.lower()
+    
+    def execute(self, user_input: str, context=None):
+        # Your logic here
+        return {
+            "success": True,
+            "response": "Task completed!",
+            "data": {}
+        }
+```
+
+Place your skill file in the `skills/` directory and it will be automatically loaded on startup.
+
+## Building
+
+To create a standalone executable:
+
+```powershell
+# Install build dependencies
+pip install pyinstaller
+
+# Run the build script
+.\build.ps1
+```
+
+The executable will be created in `dist\AIAgent.exe` with all dependencies bundled.
+
+## Scheduled Tasks
+
+The agent supports scheduled task execution:
+
+```python
+# Schedule a task to run every day at 9 AM
+scheduler.schedule_cron(
+    task_id="daily_report",
+    func=generate_report,
+    hour="9",
+    minute="0"
+)
+```
+
+## File Monitoring
+
+Watch directories for changes:
+
+```python
+# Watch a folder for new files
+file_watcher.watch_directory(
+    path="C:\\Downloads",
+    on_created=lambda file: process_new_file(file),
+    patterns=["*.pdf", "*.docx"]
+)
+```
 
 ## Development Status
 
