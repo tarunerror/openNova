@@ -68,6 +68,7 @@ class ActionPlanner:
     def __init__(self):
         """Initialize the planner."""
         self.llm = llm_client
+        self.last_error = ""
     
     def create_plan(self, user_command: str, context: Dict[str, Any] = None) -> List[Dict[str, Any]]:
         """
@@ -82,9 +83,12 @@ class ActionPlanner:
         """
         if not self.llm.is_available():
             logger.error("LLM not available for planning")
+            self.last_error = "LLM not available for planning"
             return []
         
         try:
+            self.last_error = ""
+
             # Build the prompt
             prompt = f"User command: {user_command}\n\n"
             
@@ -100,6 +104,11 @@ class ActionPlanner:
                 prompt=prompt,
                 system_message=SYSTEM_PROMPT
             )
+
+            if isinstance(response, str) and response.startswith("Error:"):
+                self.last_error = response
+                logger.error(f"Planner LLM error: {response}")
+                return []
             
             # Parse JSON response
             plan = self._parse_plan(response)
@@ -109,6 +118,7 @@ class ActionPlanner:
             
         except Exception as e:
             logger.error(f"Error creating plan: {e}")
+            self.last_error = str(e)
             return []
     
     def _parse_plan(self, response: str) -> List[Dict[str, Any]]:
@@ -144,9 +154,11 @@ class ActionPlanner:
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse plan JSON: {e}")
             logger.debug(f"Response was: {response}")
+            self.last_error = f"Failed to parse plan JSON: {e}"
             return []
         except Exception as e:
             logger.error(f"Error parsing plan: {e}")
+            self.last_error = str(e)
             return []
     
     def validate_plan(self, plan: List[Dict[str, Any]]) -> bool:

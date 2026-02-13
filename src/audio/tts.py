@@ -66,18 +66,23 @@ class TextToSpeech:
     def _play_audio(self, audio_path: Path):
         """Play audio file using system default player."""
         try:
-            import platform
-            system = platform.system()
-            
-            if system == "Windows":
-                os.startfile(str(audio_path))
-            elif system == "Darwin":  # macOS
-                os.system(f"afplay {audio_path}")
-            else:  # Linux
-                os.system(f"mpg123 {audio_path}")
+            from playsound import playsound
+            playsound(str(audio_path), block=True)
                 
         except Exception as e:
-            logger.error(f"Error playing audio: {e}")
+            logger.error(f"Error playing audio with playsound: {e}")
+            try:
+                import platform
+                system = platform.system()
+
+                if system == "Windows":
+                    os.startfile(str(audio_path))
+                elif system == "Darwin":  # macOS
+                    os.system(f"afplay {audio_path}")
+                else:  # Linux
+                    os.system(f"mpg123 {audio_path}")
+            except Exception as fallback_error:
+                logger.error(f"Fallback audio playback failed: {fallback_error}")
     
     @staticmethod
     def list_voices():

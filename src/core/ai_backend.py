@@ -206,13 +206,19 @@ class AIBackend:
                                     "needs_confirmation": needs_confirm
                                 }
                             else:
+                                plan_error = getattr(self.planner, "last_error", "")
+                                user_message = "Could not create action plan"
+
+                                if "ollama model not found" in plan_error.lower() or "model not found" in plan_error.lower():
+                                    user_message = "Ollama model missing. Run: ollama pull llama3.2"
+
                                 if self.tts:
-                                    self.tts.speak("I'm not sure how to do that.")
+                                    self.tts.speak(user_message)
                                 
                                 return {
                                     "type": "response",
                                     "status": "error",
-                                    "message": "Could not create action plan"
+                                    "message": user_message
                                 }
                         else:
                             # Just echo back if no planner
@@ -257,6 +263,9 @@ class AIBackend:
             plan = command.get("plan", [])
             
             if self.executor and plan:
+                if self.tts:
+                    self.tts.speak(f"Executing {len(plan)} steps.")
+
                 result = self.executor.execute_plan(plan)
                 
                 success = result.get("success", False)
@@ -265,9 +274,9 @@ class AIBackend:
                 # Speak result
                 if self.tts:
                     if success:
-                        self.tts.speak("Task completed successfully.")
+                        self.tts.speak(f"Task completed successfully. {message}.")
                     else:
-                        self.tts.speak("Task completed with some errors.")
+                        self.tts.speak(f"Task completed with some errors. {message}.")
                 
                 return {
                     "type": "response",

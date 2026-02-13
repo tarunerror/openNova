@@ -8,6 +8,29 @@ import signal
 import time
 
 
+def run_gui_frontend(cmd_queue: Queue, resp_queue: Queue):
+    """Process entrypoint for GUI frontend."""
+    try:
+        from src.gui.main_window import run_gui
+        run_gui(cmd_queue, resp_queue)
+    except Exception as e:
+        print(f"[✗] GUI Process Error: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def run_ai_backend(cmd_queue: Queue, resp_queue: Queue):
+    """Process entrypoint for AI backend."""
+    try:
+        from src.core.ai_backend import AIBackend
+        backend = AIBackend(cmd_queue, resp_queue)
+        backend.run()
+    except Exception as e:
+        print(f"[✗] AI Backend Error: {e}")
+        import traceback
+        traceback.print_exc()
+
+
 class Application:
     """Main application coordinator."""
     
@@ -30,7 +53,7 @@ class Application:
             # Start AI Backend Process
             print("[*] Starting AI Backend Process...")
             self.ai_process = Process(
-                target=self._run_ai_backend,
+                target=run_ai_backend,
                 args=(self.command_queue, self.response_queue),
                 name="AI_Backend"
             )
@@ -39,7 +62,7 @@ class Application:
             # Start GUI Frontend Process
             print("[*] Starting GUI Frontend Process...")
             self.gui_process = Process(
-                target=self._run_gui_frontend,
+                target=run_gui_frontend,
                 args=(self.command_queue, self.response_queue),
                 name="GUI_Frontend"
             )
@@ -57,27 +80,6 @@ class Application:
             print(f"\n[✗] Error: {e}")
         finally:
             self._cleanup()
-    
-    def _run_gui_frontend(self, cmd_queue: Queue, resp_queue: Queue):
-        """Run the GUI frontend process."""
-        try:
-            from src.gui.main_window import run_gui
-            run_gui(cmd_queue, resp_queue)
-        except Exception as e:
-            print(f"[✗] GUI Process Error: {e}")
-            import traceback
-            traceback.print_exc()
-    
-    def _run_ai_backend(self, cmd_queue: Queue, resp_queue: Queue):
-        """Run the AI backend process."""
-        try:
-            from src.core.ai_backend import AIBackend
-            backend = AIBackend(cmd_queue, resp_queue)
-            backend.run()
-        except Exception as e:
-            print(f"[✗] AI Backend Error: {e}")
-            import traceback
-            traceback.print_exc()
     
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals."""

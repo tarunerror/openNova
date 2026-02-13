@@ -51,8 +51,8 @@ def main():
             sys.exit(0)
         else:
             print("[✗] Failed to obtain admin privileges.")
-            print("[*] Some features may not work correctly.")
-            input("Press Enter to continue anyway...")
+            print("[!] Continuing without admin - some features may not work.")
+            # Removed input() so it doesn't pause
     else:
         print("[✓] Running with Administrator privileges.")
     

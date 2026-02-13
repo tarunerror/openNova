@@ -20,17 +20,26 @@ class Config:
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from file or create default."""
         if self.config_file.exists():
-            with open(self.config_file, 'r') as f:
-                return json.load(f)
+            try:
+                with open(self.config_file, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                defaults = self._default_config()
+                self.settings = defaults
+                self.save()
+                return defaults
         else:
-            return self._default_config()
+            defaults = self._default_config()
+            self.settings = defaults
+            self.save()
+            return defaults
     
     def _default_config(self) -> Dict[str, Any]:
         """Return default configuration."""
         return {
             "llm": {
                 "provider": "ollama",  # ollama, openai, anthropic, google
-                "model": "llama3.2-vision",
+                "model": "llama3.2",
                 "api_key": "",
                 "base_url": "http://localhost:11434"
             },
