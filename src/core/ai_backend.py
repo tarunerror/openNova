@@ -34,6 +34,9 @@ class AIBackend:
         # Initialize audio components
         self._init_audio()
         
+        # Initialize brain components
+        self._init_brain()
+        
         logger.info("AI Backend initialized")
     
     def _init_audio(self):
@@ -53,6 +56,21 @@ class AIBackend:
             self.recorder = None
             self.stt = None
             self.tts = None
+    
+    def _init_brain(self):
+        """Initialize LLM and planning components."""
+        try:
+            from src.llm.planner import planner
+            from src.memory.manager import memory
+            
+            self.planner = planner
+            self.memory = memory
+            
+            logger.info("Brain components initialized")
+        except Exception as e:
+            logger.error(f"Error initializing brain: {e}")
+            self.planner = None
+            self.memory = None
     
     def run(self):
         """Main loop for the AI backend."""
@@ -126,15 +144,59 @@ class AIBackend:
                     text = self.stt.transcribe_numpy(audio_data)
                     
                     if text:
-                        # Speak back confirmation
-                        if self.tts:
-                            self.tts.speak(f"I heard: {text}")
+                        logger.info(f"Transcribed: {text}")
                         
-                        return {
-                            "type": "response",
-                            "status": "success",
-                            "message": f"Transcribed: {text}"
-                        }
+                        # Store in memory
+                        if self.memory:
+                            self.memory.remember(
+                                content=f"User said: {text}",
+                                metadata={"type": "command"}
+                            )
+                        
+                        # Create action plan
+                        if self.planner:
+                            plan = self.planner.create_plan(text)
+                            
+                            if plan:
+                                # Check if confirmation needed
+                                needs_confirm = self.planner.needs_confirmation(plan)
+                                
+                                plan_summary = f"Created plan with {len(plan)} steps"
+                                logger.info(plan_summary)
+                                
+                                # Speak back understanding
+                                if self.tts:
+                                    if needs_confirm:
+                                        self.tts.speak(f"I will {text}. Please confirm to proceed.")
+                                    else:
+                                        self.tts.speak(f"Understood: {text}. Executing now.")
+                                
+                                return {
+                                    "type": "response",
+                                    "status": "success",
+                                    "message": f"Command: {text}",
+                                    "plan": plan,
+                                    "needs_confirmation": needs_confirm
+                                }
+                            else:
+                                if self.tts:
+                                    self.tts.speak("I'm not sure how to do that.")
+                                
+                                return {
+                                    "type": "response",
+                                    "status": "error",
+                                    "message": "Could not create action plan"
+                                }
+                        else:
+                            # Just echo back if no planner
+                            if self.tts:
+                                self.tts.speak(f"I heard: {text}")
+                            
+                            return {
+                                "type": "response",
+                                "status": "success",
+                                "message": f"Transcribed: {text}"
+                            }
                     else:
                         return {
                             "type": "response",
