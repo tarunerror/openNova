@@ -232,6 +232,22 @@ class FloatingWidget(QMainWindow):
         
         if status == "success":
             self.set_status(f"✓ {message}")
+            
+            # Check if there's a plan to execute
+            if "plan" in response:
+                plan = response["plan"]
+                needs_confirm = response.get("needs_confirmation", False)
+                
+                if needs_confirm:
+                    # Show confirmation dialog (simplified for now)
+                    self.set_status("⚠ Confirmation required - executing anyway")
+                
+                # Execute the plan
+                self.command_queue.put({
+                    "type": "execute_plan",
+                    "plan": plan
+                })
+                
         else:
             self.set_status(f"✗ {message}")
     

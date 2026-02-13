@@ -62,15 +62,18 @@ class AIBackend:
         try:
             from src.llm.planner import planner
             from src.memory.manager import memory
+            from src.actions.executor import action_executor
             
             self.planner = planner
             self.memory = memory
+            self.executor = action_executor
             
             logger.info("Brain components initialized")
         except Exception as e:
             logger.error(f"Error initializing brain: {e}")
             self.planner = None
             self.memory = None
+            self.executor = None
     
     def run(self):
         """Main loop for the AI backend."""
@@ -224,6 +227,36 @@ class AIBackend:
                 "status": "success",
                 "message": f"Processing: {text}"
             }
+        
+        elif cmd_type == "execute_plan":
+            # Execute an action plan
+            plan = command.get("plan", [])
+            
+            if self.executor and plan:
+                result = self.executor.execute_plan(plan)
+                
+                success = result.get("success", False)
+                message = f"Executed {result.get('successful_steps', 0)}/{result.get('total_steps', 0)} steps"
+                
+                # Speak result
+                if self.tts:
+                    if success:
+                        self.tts.speak("Task completed successfully.")
+                    else:
+                        self.tts.speak("Task completed with some errors.")
+                
+                return {
+                    "type": "response",
+                    "status": "success" if success else "partial",
+                    "message": message,
+                    "result": result
+                }
+            else:
+                return {
+                    "type": "response",
+                    "status": "error",
+                    "message": "No plan to execute or executor not available"
+                }
         
         else:
             return {
