@@ -2,10 +2,13 @@
 Main GUI Window - Floating overlay widget.
 """
 import sys
+import logging
 from multiprocessing import Queue
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QPushButton
 from PyQt6.QtCore import Qt, QTimer, QPoint, pyqtSignal, QThread
 from PyQt6.QtGui import QPainter, QColor, QPen, QFont
+
+logger = logging.getLogger("GUI")
 
 
 class CommandProcessor(QThread):
@@ -41,9 +44,11 @@ class FloatingWidget(QMainWindow):
         
         self.state = "idle"  # idle, listening, thinking, speaking
         self.status_text = "Ready"
+        self.is_recording = False
         
         self._init_ui()
         self._start_response_processor()
+        self._setup_hotkey()
         
         # Test the connection
         self._test_backend()
@@ -108,6 +113,30 @@ class FloatingWidget(QMainWindow):
         layout.addWidget(self.title_label)
         layout.addWidget(self.state_label)
         layout.addWidget(self.status_label)
+        
+        # Voice control button
+        self.voice_button = QPushButton("🎤 Click or Press Ctrl+Space")
+        self.voice_button.setStyleSheet("""
+            QPushButton {
+                background-color: #1a1a2e;
+                color: #00ff88;
+                border: 2px solid #00ff88;
+                border-radius: 10px;
+                padding: 10px;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #00ff88;
+                color: #1a1a2e;
+            }
+            QPushButton:pressed {
+                background-color: #00cc66;
+            }
+        """)
+        self.voice_button.clicked.connect(self._toggle_recording)
+        layout.addWidget(self.voice_button)
+        
         layout.addStretch()
         
         central.setLayout(layout)
@@ -146,6 +175,55 @@ class FloatingWidget(QMainWindow):
             "type": "test"
         })
         self.set_status("Testing backend connection...")
+    
+    def _setup_hotkey(self):
+        """Setup global hotkey for voice activation."""
+        try:
+            from src.audio.hotkey import HotkeyHandler
+            
+            self.hotkey_handler = HotkeyHandler(
+                hotkey="<ctrl>+<space>",
+                callback=self._toggle_recording
+            )
+            self.hotkey_handler.start()
+            logger.info("Hotkey activated: Ctrl+Space")
+            
+        except Exception as e:
+            logger.error(f"Failed to setup hotkey: {e}")
+            self.hotkey_handler = None
+    
+    def _toggle_recording(self):
+        """Toggle voice recording."""
+        if self.is_recording:
+            self._stop_recording()
+        else:
+            self._start_recording()
+    
+    def _start_recording(self):
+        """Start voice recording."""
+        logger.info("Starting voice recording...")
+        self.is_recording = True
+        self.set_state("listening")
+        self.set_status("Listening... (Click again to stop)")
+        self.voice_button.setText("⏹ Stop Recording")
+        
+        # Send command to backend to start recording
+        self.command_queue.put({
+            "type": "start_recording"
+        })
+    
+    def _stop_recording(self):
+        """Stop voice recording."""
+        logger.info("Stopping voice recording...")
+        self.is_recording = False
+        self.set_state("thinking")
+        self.set_status("Processing...")
+        self.voice_button.setText("🎤 Click or Press Ctrl+Space")
+        
+        # Send command to backend to stop and process
+        self.command_queue.put({
+            "type": "stop_recording"
+        })
     
     def _handle_response(self, response: dict):
         """Handle responses from AI backend."""
@@ -193,6 +271,9 @@ class FloatingWidget(QMainWindow):
     
     def closeEvent(self, event):
         """Handle window close."""
+        if hasattr(self, 'hotkey_handler') and self.hotkey_handler:
+            self.hotkey_handler.stop()
+        
         self.processor.stop()
         self.processor.wait()
         event.accept()
