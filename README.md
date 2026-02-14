@@ -26,7 +26,7 @@ openNova is an enterprise-grade desktop assistant with voice control, visual und
 
 1. Clone the repository:
 ```bash
-[<git clone tarunerror/openNova>](https://github.com/tarunerror/openNova)
+https://github.com/tarunerror/openNova
 cd openNova
 ```
 
