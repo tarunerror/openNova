@@ -1,7 +1,7 @@
-# Build script for AI Agent
+# Build script for openNova
 # Creates a standalone executable using PyInstaller
 
-Write-Host "Building AI Agent..." -ForegroundColor Green
+Write-Host "Building openNova..." -ForegroundColor Green
 
 # Clean previous builds
 if (Test-Path "build") {
@@ -16,11 +16,11 @@ if (Test-Path "dist") {
 
 # Run PyInstaller
 Write-Host "Running PyInstaller..." -ForegroundColor Green
-pyinstaller ai_agent.spec
+pyinstaller openNova.spec
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`nBuild completed successfully!" -ForegroundColor Green
-    Write-Host "Executable location: dist\AIAgent.exe" -ForegroundColor Cyan
+    Write-Host "Executable location: dist\openNova.exe" -ForegroundColor Cyan
 } else {
     Write-Host "`nBuild failed!" -ForegroundColor Red
     exit 1

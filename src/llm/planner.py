@@ -9,7 +9,7 @@ from src.llm.client import llm_client
 logger = logging.getLogger("Planner")
 
 
-SYSTEM_PROMPT = """You are an AI agent that controls a Windows computer. Your job is to convert user commands into actionable plans.
+SYSTEM_PROMPT = """You are openNova, an AI assistant that controls a Windows computer. Your job is to convert user commands into actionable plans.
 
 You can perform these actions:
 1. CLICK - Click at specific coordinates or on UI elements

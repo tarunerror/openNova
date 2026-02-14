@@ -1,4 +1,4 @@
-# Testing Guide for AI Agent
+# Testing Guide for openNova
 
 ## Quick Start
 
@@ -45,7 +45,7 @@ cp .env.example .env
 notepad .env
 ```
 
-Configuration is stored in `~/.ai_agent/config.json` (created on first run).
+Configuration is stored in `~/.openNova/config.json` (created on first run).
 
 ---
 
@@ -127,7 +127,7 @@ python main.py
 
 **Steps:**
 1. Open Notepad manually
-2. Say: "Type 'Hello from AI Agent'"
+2. Say: "Type 'Hello from openNova'"
 
 **Expected:**
 - Text appears in Notepad
@@ -157,7 +157,7 @@ notepad skills\my_skill.py
 
 **Steps:**
 1. Drag a file from Explorer
-2. Drop it onto the AI Agent window
+2. Drop it onto the openNova window
 3. Window shows "Drop files here..."
 
 **Expected:**
@@ -229,7 +229,7 @@ task_scheduler.schedule_once("test", test_task, run_time)
 4. Say: "Replay macro demo_flow"
 
 **Expected:**
-- Macro JSON file created under `~/.ai_agent/macros/`
+- Macro JSON file created under `~/.openNova/macros/`
 - Replay reproduces recorded sequence with timing
 - Recorded events include UI context metadata when available
 
@@ -272,12 +272,12 @@ Get-Content logs\ai_backend.log -Wait
 - First run downloads ~140MB model files
 
 **Issue: "ChromaDB connection error"**
-- Delete `~/.ai_agent/chroma_db/` and restart
+- Delete `~/.openNova/chroma_db/` and restart
 - `pip install --upgrade chromadb`
 
 **Issue: "Ollama connection refused"**
 - Ensure Ollama is running: `ollama serve`
-- Check URL in config: `~/.ai_agent/config.json`
+- Check URL in config: `~/.openNova/config.json`
 
 **Issue: "PyQt6 not found"**
 - `pip install PyQt6`
@@ -285,7 +285,7 @@ Get-Content logs\ai_backend.log -Wait
 
 **Issue: GUI not visible**
 - Check multiple monitors
-- Reset position in config: delete `~/.ai_agent/config.json`
+- Reset position in config: delete `~/.openNova/config.json`
 
 ---
 
@@ -327,7 +327,7 @@ Get-Process python | Select-Object CPU, WorkingSet64
 python main.py
 
 # 1. Voice: "Open Notepad"
-# 2. Voice: "Type 'Testing AI Agent'"
+# 2. Voice: "Type 'Testing openNova'"
 # 3. Voice: "Save this file as test.txt"
 # 4. Voice: "Close Notepad"
 ```
@@ -343,7 +343,7 @@ python main.py
 .\build.ps1
 
 # Test the built executable
-.\dist\AIAgent.exe
+.\dist\openNova.exe
 ```
 
 **Expected:**
@@ -385,6 +385,6 @@ def test_mouse_move():
 For issues, check:
 - Console output for error messages
 - Log files in `logs/` directory
-- Configuration in `~/.ai_agent/config.json`
+- Configuration in `~/.openNova/config.json`
 
 Happy testing! 🚀

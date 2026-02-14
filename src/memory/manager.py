@@ -21,7 +21,7 @@ class MemoryManager:
             persist_dir: Directory to persist ChromaDB data
         """
         if persist_dir is None:
-            persist_dir = str(Path.home() / ".ai_agent" / "memory")
+            persist_dir = str(Path.home() / ".openNova" / "memory")
         
         self.persist_dir = persist_dir
         self.client = None
@@ -40,7 +40,7 @@ class MemoryManager:
             # Get or create collection
             self.collection = self.client.get_or_create_collection(
                 name="agent_memory",
-                metadata={"description": "Long-term memory for AI agent"}
+                metadata={"description": "Long-term memory for openNova"}
             )
             
             logger.info(f"Memory initialized at {self.persist_dir}")

@@ -1,6 +1,6 @@
-# Enterprise Desktop AI Agent
+# openNova Desktop Assistant
 
-An enterprise-grade desktop AI agent with voice control, visual understanding, and autonomous task execution.
+openNova is an enterprise-grade desktop assistant with voice control, visual understanding, and autonomous task execution.
 
 ## Features
 
@@ -27,7 +27,7 @@ An enterprise-grade desktop AI agent with voice control, visual understanding, a
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd something
+cd openNova
 ```
 
 2. Create virtual environment:
@@ -48,7 +48,7 @@ python main.py
 
 ## Configuration
 
-Configuration is stored in `~/.ai_agent/config.json`. Key settings:
+Configuration is stored in `~/.openNova/config.json`. Key settings:
 
 - **LLM Provider**: Choose between `ollama`, `openai`, `anthropic`, or `google`
 - **Wake Word**: Customize activation phrase
@@ -87,13 +87,13 @@ OLLAMA_HOST=http://localhost:11434
 
 ### Voice Commands
 
-1. Say "Hey Agent" or press `Ctrl+Space`
+1. Say "Hey openNova" or press `Ctrl+Space`
 2. Speak your command
 3. Agent executes and responds
 
 ### Drag and Drop
 
-Simply drag files onto the AI Agent window to process them. The agent will ask what you'd like to do with the files.
+Simply drag files onto the openNova window to process them. The assistant will ask what you'd like to do with the files.
 
 ### Example Commands
 
@@ -153,7 +153,7 @@ pip install pyinstaller
 .\build.ps1
 ```
 
-The executable will be created in `dist\AIAgent.exe` with all dependencies bundled.
+The executable will be created in `dist\openNova.exe` with all dependencies bundled.
 
 ## Scheduled Tasks
 

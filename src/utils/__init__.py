@@ -1,5 +1,5 @@
 """
-Utility modules for the AI agent.
+Utility modules for openNova.
 """
 from .logging_config import setup_logging, get_logger
 

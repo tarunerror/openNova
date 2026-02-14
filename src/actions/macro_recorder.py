@@ -19,7 +19,7 @@ class MacroRecorder:
         self.start_ts = 0.0
         self.events: List[Dict[str, Any]] = []
         self.current_macro_name = ""
-        self.output_dir = Path.home() / ".ai_agent" / "macros"
+        self.output_dir = Path.home() / ".openNova" / "macros"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.mouse_listener = None

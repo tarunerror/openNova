@@ -1,5 +1,5 @@
 """
-Configuration management for the AI Agent.
+Configuration management for openNova.
 """
 import os
 import json
@@ -11,7 +11,7 @@ class Config:
     """Central configuration manager."""
     
     def __init__(self):
-        self.config_dir = Path.home() / ".ai_agent"
+        self.config_dir = Path.home() / ".openNova"
         self.config_file = self.config_dir / "config.json"
         self.config_dir.mkdir(exist_ok=True)
         

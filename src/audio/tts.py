@@ -17,7 +17,7 @@ class TextToSpeech:
     def __init__(self, voice="en-US-AriaNeural"):
         """Initialize TTS engine."""
         self.voice = voice
-        self.temp_dir = Path(tempfile.gettempdir()) / "ai_agent_tts"
+        self.temp_dir = Path(tempfile.gettempdir()) / "openNova_tts"
         self.temp_dir.mkdir(exist_ok=True)
         
         try:

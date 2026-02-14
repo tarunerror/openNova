@@ -29,7 +29,7 @@ class WeatherSkill(Skill):
     
     @property
     def author(self) -> str:
-        return "AI Agent Team"
+        return "openNova Team"
     
     def can_handle(self, user_input: str) -> bool:
         """

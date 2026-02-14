@@ -1,5 +1,5 @@
 """
-Enterprise Desktop AI Agent
+openNova Enterprise Desktop Assistant
 Main entry point with Admin elevation support
 """
 import ctypes
@@ -38,7 +38,7 @@ def run_as_admin():
 def main():
     """Main application entry point."""
     print("=" * 60)
-    print("Enterprise Desktop AI Agent - Starting...")
+    print("openNova Enterprise Desktop Assistant - Starting...")
     print("=" * 60)
     
     # Check for admin privileges

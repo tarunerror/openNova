@@ -112,7 +112,7 @@ class ScreenCapture:
             from PIL import Image
             
             if filename is None:
-                temp_dir = Path(tempfile.gettempdir()) / "ai_agent_screenshots"
+                temp_dir = Path(tempfile.gettempdir()) / "openNova_screenshots"
                 temp_dir.mkdir(exist_ok=True)
                 filename = str(temp_dir / f"screenshot_{int(Path().stat().st_mtime * 1000)}.png")
             

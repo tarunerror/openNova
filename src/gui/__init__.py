@@ -1,1 +1,1 @@
-"""GUI package for the Desktop AI Agent."""
+"""GUI package for openNova."""

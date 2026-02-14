@@ -6,7 +6,7 @@ import sys
 
 def main():
     print("=" * 60)
-    print("AI Agent - Test Mode (No Admin Required)")
+    print("openNova - Test Mode (No Admin Required)")
     print("=" * 60)
     print("[!] Running in test mode - admin features disabled")
     print()

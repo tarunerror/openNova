@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller spec file for AI Agent desktop application.
-Build with: pyinstaller ai_agent.spec
+PyInstaller spec file for openNova desktop application.
+Build with: pyinstaller openNova.spec
 """
 
 block_cipher = None
@@ -20,40 +20,40 @@ a = Analysis(
         # Core imports
         'multiprocessing',
         'queue',
-        
+
         # GUI
         'PyQt6',
         'PyQt6.QtCore',
         'PyQt6.QtGui',
         'PyQt6.QtWidgets',
-        
+
         # LLM
         'litellm',
         'openai',
         'anthropic',
-        
+
         # Audio
         'faster_whisper',
         'edge_tts',
         'pyaudio',
         'openwakeword',
-        
+
         # Vision & Control
         'pyautogui',
         'mss',
         'pywinauto',
         'PIL',
-        
+
         # Memory
         'chromadb',
         'chromadb.config',
-        
+
         # Scheduler & Watcher
         'apscheduler',
         'apscheduler.schedulers.background',
         'watchdog',
         'watchdog.observers',
-        
+
         # System
         'pynput',
         'pynput.keyboard',
@@ -61,11 +61,11 @@ a = Analysis(
         'win32api',
         'win32con',
         'win32gui',
-        
+
         # Utilities
         'dotenv',
         'requests',
-        
+
         # Application modules
         'src.core',
         'src.gui',
@@ -102,7 +102,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='AIAgent',
+    name='openNova',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

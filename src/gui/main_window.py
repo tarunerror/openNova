@@ -78,7 +78,7 @@ class FloatingWidget(QMainWindow):
         layout.setContentsMargins(20, 20, 20, 20)
         
         # Title label
-        self.title_label = QLabel("AI Agent")
+        self.title_label = QLabel("openNova")
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title_label.setStyleSheet("""
             QLabel {
@@ -141,7 +141,7 @@ class FloatingWidget(QMainWindow):
         
         central.setLayout(layout)
         
-        self.setWindowTitle("AI Agent")
+        self.setWindowTitle("openNova")
         
         # Enable drag and drop
         self.setAcceptDrops(True)
