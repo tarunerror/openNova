@@ -8,8 +8,10 @@ An enterprise-grade desktop AI agent with voice control, visual understanding, a
 - 👁️ **Visual Understanding**: Screenshot analysis and UI automation
 - 🧠 **Multi-LLM Support**: OpenAI, Anthropic, Google, or local (Ollama)
 - 🔒 **Privacy First**: Optional 100% local processing
+- 🛡️ **Triple Confirmation Safety**: Dangerous actions require 3 explicit confirms
 - 🎯 **Multi-Process Architecture**: Responsive UI with powerful backend
 - 🔧 **Extensible**: Plugin system for custom skills
+- 🧪 **Imitation Learning**: Record and replay macro traces for repeated workflows
 - 🤖 **Autonomous**: Event-driven and scheduled task execution
 
 ## Installation
@@ -100,6 +102,13 @@ Simply drag files onto the AI Agent window to process them. The agent will ask w
 - "Schedule an email to send tomorrow at 9 AM"
 - "What's the weather like?" (via weather plugin)
 - "Move the mouse to the File menu and click"
+- "Start macro recording named invoice_flow"
+- "Stop macro recording"
+- "Replay macro invoice_flow"
+
+### Dangerous Action Confirmation
+
+For dangerous operations (delete/format/registry/system commands), the agent will block execution and require three separate "confirm" responses before running the plan. Say "cancel" at any time to abort.
 
 ## Plugin Development
 

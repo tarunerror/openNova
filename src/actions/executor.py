@@ -6,6 +6,7 @@ import time
 from typing import List, Dict, Any
 from src.actions.input_simulator import input_sim
 from src.actions.shell import shell_executor
+from src.actions.macro_recorder import macro_recorder
 from src.vision.accessibility import accessibility
 from src.vision.analyzer import vision_analyzer
 
@@ -105,6 +106,15 @@ class ActionExecutor:
         
         elif action_type == "scroll":
             return self._action_scroll(action)
+
+        elif action_type == "macro_record_start":
+            return self._action_macro_record_start(action)
+
+        elif action_type == "macro_record_stop":
+            return self._action_macro_record_stop(action)
+
+        elif action_type == "macro_replay":
+            return self._action_macro_replay(action)
         
         else:
             logger.warning(f"Unknown action type: {action_type}")
@@ -243,6 +253,21 @@ class ActionExecutor:
         self.input_sim.scroll(clicks, direction)
         
         return {"success": True, "message": f"Scrolled {clicks} clicks {direction}"}
+
+    def _action_macro_record_start(self, action: Dict[str, Any]) -> Dict[str, Any]:
+        """Start imitation-learning macro recording."""
+        macro_name = action.get("target") or action.get("value") or "default_macro"
+        return macro_recorder.start_recording(str(macro_name))
+
+    def _action_macro_record_stop(self, action: Dict[str, Any]) -> Dict[str, Any]:
+        """Stop macro recording and persist trace JSON."""
+        return macro_recorder.stop_recording()
+
+    def _action_macro_replay(self, action: Dict[str, Any]) -> Dict[str, Any]:
+        """Replay a recorded macro trace."""
+        macro_name = action.get("target") or action.get("value") or "default_macro"
+        speed = action.get("speed", 1.0)
+        return macro_recorder.replay(str(macro_name), speed=float(speed))
 
 
 # Global action executor

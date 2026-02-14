@@ -61,6 +61,7 @@ class Config:
             },
             "safety": {
                 "confirm_dangerous_actions": True,
+                "dangerous_confirmation_count": 3,
                 "blacklist_commands": [
                     "format",
                     "rm -rf /",

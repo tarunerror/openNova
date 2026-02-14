@@ -230,6 +230,14 @@ class FloatingWidget(QMainWindow):
     
     def _handle_response(self, response: dict):
         """Handle responses from AI backend."""
+        response_type = response.get("type", "response")
+
+        if response_type == "event" and response.get("event") == "wake_word_detected":
+            self.set_status("Wake word detected")
+            if not self.is_recording:
+                self._start_recording()
+            return
+
         status = response.get("status", "unknown")
         message = response.get("message", "")
         
@@ -242,14 +250,19 @@ class FloatingWidget(QMainWindow):
                 needs_confirm = response.get("needs_confirmation", False)
                 
                 if needs_confirm:
-                    # Show confirmation dialog (simplified for now)
-                    self.set_status("⚠ Confirmation required - executing anyway")
+                    remaining = response.get("remaining_confirmations", 3)
+                    self.set_status(f"⚠ Dangerous action blocked. Say confirm ({remaining} remaining)")
+                    return
                 
                 # Execute the plan
                 self.command_queue.put({
                     "type": "execute_plan",
                     "plan": plan
                 })
+
+            if response.get("awaiting_confirmation"):
+                remaining = response.get("remaining_confirmations", 3)
+                self.set_status(f"⚠ Awaiting confirmation: {remaining} remaining")
                 
         else:
             self.set_status(f"✗ {message}")

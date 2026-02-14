@@ -18,9 +18,12 @@ You can perform these actions:
 4. SHELL - Execute PowerShell commands
 5. OPEN - Open applications
 6. WAIT - Wait for a duration
+7. MACRO_RECORD_START - Start recording user mouse/keyboard actions
+8. MACRO_RECORD_STOP - Stop recording and save the macro trace
+9. MACRO_REPLAY - Replay a saved macro by name
 
 Return your plan as a JSON array of action objects. Each action should have:
-- "action": The action type (click, type, key, shell, open, wait)
+- "action": The action type (click, type, key, shell, open, wait, macro_record_start, macro_record_stop, macro_replay)
 - "target": What to interact with (coordinates, element name, command, etc.)
 - "value": Additional value if needed (text to type, key to press, etc.)
 - "thought": Brief explanation of why this step is needed
@@ -59,6 +62,7 @@ IMPORTANT:
 - Include thoughts for clarity
 - Keep plans simple and direct
 - For dangerous operations (delete, format, etc), add a "confirm": true flag
+- For macro recording, use target as macro name (e.g., "excel_invoice_flow")
 """
 
 

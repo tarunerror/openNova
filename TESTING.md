@@ -205,6 +205,36 @@ task_scheduler.schedule_once("test", test_task, run_time)
 
 ---
 
+### Test 10: Dangerous Action Triple Confirmation
+
+**Steps:**
+1. Give a dangerous command like: "Delete everything in this folder"
+2. Verify agent asks for triple confirmation
+3. Say "confirm" once and check it does not execute
+4. Say "confirm" second time and check it does not execute
+5. Say "confirm" third time and verify execution starts
+
+**Expected:**
+- Agent blocks dangerous action until 3/3 confirmations are received
+- Saying "cancel" before 3 confirms aborts execution
+
+---
+
+### Test 11: Imitation Learning Macro Record/Replay
+
+**Steps:**
+1. Say: "Start macro recording named demo_flow"
+2. Perform a short mouse/keyboard sequence manually
+3. Say: "Stop macro recording"
+4. Say: "Replay macro demo_flow"
+
+**Expected:**
+- Macro JSON file created under `~/.ai_agent/macros/`
+- Replay reproduces recorded sequence with timing
+- Recorded events include UI context metadata when available
+
+---
+
 ## Debugging
 
 ### Enable Debug Logging
